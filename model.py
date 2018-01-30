@@ -31,10 +31,14 @@ class User(db.Model):
 # Put your Movie and Rating model classes here.
 class Movie(db.Model):
     """Movies of ratings website."""
-
     __tablename__ = "movies"
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+        return "<Movie movie_id={} title={} released_at{} imdb_url={}>".format(self.movie_id, self.title, self.released_at, self.imdb_url)
+
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(120), nullable=False)
     released_at = db.Column(db.DateTime)
     imdb_url = db.Column(db.String(200))
 
@@ -44,10 +48,19 @@ class Rating(db.Model):
 
     __tablename__ = "ratings"
 
-    rating_id = db.Column(db.Integer, primary_key=True)
-    movie_id = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     score = db.Column(db.Integer, nullable=False)
+
+    #Define relationship to user and movie
+    user = db.relationship("User", backref=db.backref("ratings", order_by=rating_id))
+    movie = db.relationship("Movie", backref=db.backref("ratings", order_by=rating_id))
+
+    def __repr__(self):
+        """Provide helpful representation when printed"""
+        return "Rating rating_id={} movie_id{} user_id{} score{}".format(self.rating_id, self.movie_id, self.user_id)
+
 
 ##############################################################################
 # Helper functions
@@ -61,6 +74,9 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
+
+
+
 
 
 if __name__ == "__main__":
