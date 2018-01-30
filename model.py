@@ -17,6 +17,10 @@ class User(db.Model):
 
     __tablename__ = "users"
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+        return "<User user_id={} email={}>".format(self.user_id, self.email)
+
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), nullable=True)
     password = db.Column(db.String(64), nullable=True)
@@ -30,9 +34,9 @@ class Movie(db.Model):
 
     __tablename__ = "movies"
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String, nullable=False)
+    title = db.Column(db.String(64), nullable=False)
     released_at = db.Column(db.DateTime)
-    imdb_url = db.Column(db.String)
+    imdb_url = db.Column(db.String(200))
 
 
 class Rating(db.Model):
@@ -41,9 +45,9 @@ class Rating(db.Model):
     __tablename__ = "ratings"
 
     rating_id = db.Column(db.Integer, primary_key=True)
-    movie_id = db.Column(db.Integer)
-    user_id = db.Column(db.Integer)
-    score = db.Column(db.Integer)
+    movie_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
 
 ##############################################################################
 # Helper functions
